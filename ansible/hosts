@@ -1,0 +1,15 @@
+[nginx]
+nginx-1 ansible_ssh_host=192.168.10.32
+nginx-2 ansible_ssh_host=192.168.20.34
+
+[elk]
+elastic ansible_ssh_host=192.168.30.29
+kibana ansible_ssh_host=192.168.40.4
+
+[mon]
+zabbix ansible_ssh_host=192.168.40.26
+
+[all:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -p 22 -W %h:%p -q user@51.250.45.0"'
+ansible_python_interpreter=/usr/bin/python3
+ansible_user=user

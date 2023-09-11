@@ -1,0 +1,38 @@
+- hosts: kibana
+  become: true
+  tasks:
+
+  - name: добавление ключа репозитория elasticsearch
+    apt_key:
+      keyserver: keyserver.ubuntu.com
+      id: D27D666CD88E42B4
+
+  - name: добавление репозитория elasticasearch
+    apt_repository:
+      repo: deb https://mirror.yandex.ru/mirrors/elastic/8/ stable main
+      state: present
+      filename: elk
+
+  - name: установка пакета kibana
+    apt:
+      name: kibana
+      update_cache: yes
+      state: present
+
+  - name: замена файла конфигурации kibana
+    template:
+      src: template_kibana.yml
+      dest: /etc/kibana/kibana.yml
+      owner: root
+      group: kibana
+      mode: '0660'
+
+  - name: включение службы kibana
+    systemd:
+      name: kibana.service
+      enabled: true
+
+  - name: перезапуск службы kibana
+    systemd:
+      state: restarted
+      name: kibana.service

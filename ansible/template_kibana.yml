@@ -1,0 +1,17 @@
+logging:
+  appenders:
+    file:
+      type: file
+      fileName: /var/log/kibana/kibana.log
+      layout:
+        type: json
+  root:
+    appenders:
+      - default
+      - file
+
+pid.file: /run/kibana/kibana.pid
+
+server.host: 0.0.0.0
+
+elasticsearch.hosts: ["http://elastic:9200"]

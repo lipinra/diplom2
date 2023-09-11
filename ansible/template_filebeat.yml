@@ -1,0 +1,17 @@
+filebeat.inputs:
+  - type: filestream
+    id: my-filestream-id
+    enabled: false
+    paths:
+      - /var/log/*.log
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+setup.template.settings:
+  index.number_of_shards: 1
+setup.kibana:
+  host: "kibana:5601"
+  protocol: "http"
+output.elasticsearch:
+  hosts: ["elastic:9200"]
+setup.ilm.overwrite: true
