@@ -1,0 +1,29 @@
+- name: настройка сервера elasticsearch
+  hosts: elastic
+  become: true
+  roles:
+    - elasticsearch
+
+- name: настройка сервера kibana
+  hosts: kibana
+  become: true
+  roles:
+    - kibana
+
+- name: настройка веб серверов
+  hosts: nginx
+  become: true
+  roles:
+    - nginx
+    - filebeat
+    - zabbix-agent
+
+- name: настройка серверa мониторинга zabbix
+  hosts: zabbix
+  become: true
+  roles:
+    - nginx
+    - postgresql
+    - zabbix-agent
+    - zabbix-server
+

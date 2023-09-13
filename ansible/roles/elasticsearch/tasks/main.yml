@@ -1,0 +1,37 @@
+- name: добавление ключа репозитория elasticsearch
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: D27D666CD88E42B4
+
+- name: добавление репозитория elasticasearch
+  apt_repository:
+    repo: deb https://mirror.yandex.ru/mirrors/elastic/8/ stable main
+    state: present
+    filename: elk
+
+- name: установка пакета elasticsearch
+  apt:
+    name: elasticsearch
+    update_cache: yes
+    state: present
+
+- name: изменение настроек elasticsearch
+  lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: '^xpack.security.enabled: true'
+    insertbefore: BOF
+    line: 'xpack.security.enabled: false'
+
+- name: перечитывание файлов конфигурации systemd
+  systemd:
+    daemon_reload: true
+
+- name: включение службы elasticsearch
+  systemd:
+    name: elasticsearch.service
+    enabled: true
+
+- name: перезапуск службы elasticsearch
+  systemd:
+    state: restarted
+    name: elasticsearch.service

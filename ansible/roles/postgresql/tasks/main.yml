@@ -1,0 +1,33 @@
+- name: добавление ключа репозитория postgresql
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 7FCC7D46ACCC4CF8
+
+- name: добавление репозитория postgresql
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt jammy-pgdg main
+    state: present
+    filename: postgresql
+
+- name: установка пакетов postgresql и python3-psycopg2
+  apt:
+    pkg:
+      - python3-psycopg2
+      - postgresql
+
+- name: изменение файла конфигурации postgresql
+  lineinfile:
+    path: /etc/postgresql/15/main/pg_hba.conf
+    regexp: '^local   all             postgres                                peer'
+    insertbefore: BOF
+    line: 'local all postgres trust'
+
+- name: включение службы postgresql
+  systemd:
+    name: postgresql.service
+    enabled: true
+
+- name: перезапуск службы postgresql
+  systemd:
+    state: restarted
+    name: postgresql.service

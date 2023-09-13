@@ -7,6 +7,6 @@
     enabled: true
 
   ingress_controller:
-    enabled: true
+    enabled: false
 
 

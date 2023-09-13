@@ -1,0 +1,53 @@
+- name: добавление ключа репозитория elasticsearch
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: D27D666CD88E42B4
+
+- name: добавление репозитория elasticsearch
+  apt_repository:
+    repo: deb https://mirror.yandex.ru/mirrors/elastic/8/ stable main
+    state: present
+    filename: elk
+
+- name: установка пакетa filebeat
+  apt:
+    name: filebeat
+    update_cache: yes
+    state: present
+
+- name: замена файла конфигурации filebeat
+  template:
+    src: template_filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: включение службы filebeat
+  systemd:
+    name: filebeat.service
+    enabled: true
+  
+- name: перезапуск службы filebeat
+  systemd:
+    state: restarted
+    name: filebeat.service
+
+- name: включение модуля nginx для filebeat
+  command: filebeat modules enable nginx
+
+- name: замена файла конфигурации nginx для filebeat
+  template:
+    src: template_filebeat_nginx.yml
+    dest: /etc/filebeat/modules.d/nginx.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: перезапуск службы filebeat
+  systemd:
+    state: restarted
+    name: filebeat.service
+
+- name: инициализация filebeat
+  command: filebeat setup

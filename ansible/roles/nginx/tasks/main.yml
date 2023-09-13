@@ -1,0 +1,44 @@
+- name: добавление ключа репозитория nginx
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: ABF5BD827BD9BF62
+
+- name: добавление репозитория nginx
+  apt_repository:
+    repo: deb http://nginx.org/packages/mainline/ubuntu jammy nginx
+    state: present
+    filename: nginx
+
+- name: установка пакетa nginx
+  apt:
+    name: nginx
+    update_cache: yes
+    state: present
+
+- name: замена файла настроек ротации логов nginx
+  template:
+    src: template_logrotate_nginx
+    dest: /etc/logrotate.d/nginx
+    owner: root
+    group: root
+    mode: '0644' 
+
+- name: изменение прав на файл access логов nginx
+  file:
+    path: /var/log/nginx/access.log
+    mode: '0644'
+
+- name: изменение прав на файл error логов nginx
+  file:
+    path: /var/log/nginx/error.log
+    mode: '0644'
+
+- name: включение службы nginx
+  systemd:
+    name: nginx.service
+    enabled: true
+  
+- name: перезапуск службы nginx
+  systemd:
+    state: restarted
+    name: nginx.service
